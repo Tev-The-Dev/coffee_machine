@@ -40,9 +40,7 @@ def take_money():
     dimes *= 10
     nickels *= 5
 
-    amount = quarters + dimes + nickels + pennies
-    if amount >= 100:
-        amount /= 100
+    amount = quarters + dimes + nickels + pennies/ 100
     return amount
 
 
