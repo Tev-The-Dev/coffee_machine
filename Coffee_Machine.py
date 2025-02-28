@@ -32,7 +32,7 @@ resources = {
 }
 
 #TODO: Create a function that takes in 4 inputs for coins, does the math, and converts it to dollar syntax
-def take_money():
+def take_money(c):
     quarters = int(input("How many quarters do you have? "))
     dimes = int(input("How many dimes do you have? "))
     nickels = int(input("How many nickels do you have? "))
@@ -42,11 +42,11 @@ def take_money():
     nickels *= .05
     pennies *= .01
 
-    amount = quarters + dimes + nickels + pennies/ 100
+    amount = quarters + dimes + nickels + pennies
     amount = round(amount, 2)
     paid = True
-    if check_customer_money(amount):
-        resources["money"] += amount
+    if check_customer_money(amount, c):
+        resources["money"] += MENU[c]["cost"]
         return amount
     else:
         return
@@ -55,7 +55,7 @@ def take_money():
 def set_resources(coffee):
     if check_resources():
         print(f"Your {coffee} is ${MENU[coffee_choice]["cost"]:.2f}")
-        if take_money():
+        if take_money(coffee):
             if coffee == "espresso":
                 resources["water"] -= MENU[coffee]["ingredients"]["water"]
                 resources["coffee"] -= MENU[coffee]["ingredients"]["coffee"]
@@ -66,16 +66,17 @@ def set_resources(coffee):
 
 
 #TODO: Create a function that takes in the money the customer puts in and subtracts it from the cost of the coffee. Check if the customer put in the correct or more than required amount of money
-def check_customer_money(a):
-    if a >= MENU[coffee_choice]["cost"]:
-        if a == MENU[coffee_choice]["cost"]:
+def check_customer_money(a, c):
+    if a >= MENU[c]["cost"]:
+        if a == MENU[c]["cost"]:
             print("Enjoy your coffee!")
         else:
-            print(f"Your change is ${(MENU[coffee_choice]["cost"] - a)*-1:.2}")
+            a = (MENU[c]["cost"] - a)*-1
+            print(f"Your change is ${a:.2f}")
             print("Enjoy your coffee")
-        return True
+        return a
     else:
-        print(f"You do not have enough money. Returning ${a:.2}")
+        print(f"You do not have enough money. Returning ${a:.2f}")
         return False
 
 #TODO: Create a function that checks the resources and makes sure a drink can be ordered. If not, do not accept any money AKA end the program
@@ -92,7 +93,7 @@ def report():
         if i == "coffee":
             print(f"{i.capitalize()}: {resources[i]}g")
         if i == "money":
-            print(f"{i.capitalize()}: ${resources[i]}")
+            print(f"{i.capitalize()}: ${resources[i]:.2f}")
 def refill_resources():
     continue_refilling = True
     while continue_refilling:
@@ -131,6 +132,7 @@ while order_coffee:
         order_coffee = False
     else:
         print("That is not one of your options. Try again!")
+    print('\n'*5)
 
 
 
