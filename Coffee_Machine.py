@@ -82,7 +82,7 @@ def check_customer_money(a, c):
 #TODO: Create a function that checks the resources and makes sure a drink can be ordered. If not, do not accept any money AKA end the program
 def check_resources():
     if resources["water"] < 250 or resources["milk"] < 150 or resources["coffee"] < 24:
-        print("Sorry, we this machine does not have enough resources to make that coffee. Pick something else")
+        print("Sorry, this machine does not have enough resources to make that coffee. Pick something else")
         return False
     else:
         return True
@@ -118,7 +118,7 @@ while order_coffee:
         print("Putting the machine in maintenance mode:")
         while maintain:
             #TODO: put this in a loop to allow the continuation until done
-            maintenance_mode = str(input(" Choose Option: report | refill | exit "))
+            maintenance_mode = str(input(" Choose Option: report | refill | exit \n"))
             if maintenance_mode == "report":
                 report()
             elif maintenance_mode == "refill":
