@@ -28,6 +28,7 @@ resources = {
     "water": 300,
     "milk": 200,
     "coffee": 100,
+    "money": 0.0
 }
 
 #TODO: Create a function that takes in 4 inputs for coins, does the math, and converts it to dollar syntax
@@ -43,19 +44,26 @@ def take_money():
 
     amount = quarters + dimes + nickels + pennies/ 100
     amount = round(amount, 2)
-    check_customer_money(amount)
-    return amount
+    paid = True
+    if check_customer_money(amount):
+        resources["money"] += amount
+        return amount
+    else:
+        return
 
 #TODO: access resources and subtract the amounts of the chosen drink from resources
 def set_resources(coffee):
-    if coffee == "espresso":
-        resources["water"] -= MENU[coffee]["ingredients"]["water"]
-        resources["coffee"] -= MENU[coffee]["ingredients"]["coffee"]
-    else:
-        resources["water"] -= MENU[coffee]["ingredients"]["water"]
-        resources["milk"] -= MENU[coffee]["ingredients"]["milk"]
-        resources["coffee"] -= MENU[coffee]["ingredients"]["coffee"]
-    return resources
+    if check_resources():
+        print(f"Your {coffee} is ${MENU[coffee_choice]["cost"]:.2f}")
+        if take_money():
+            if coffee == "espresso":
+                resources["water"] -= MENU[coffee]["ingredients"]["water"]
+                resources["coffee"] -= MENU[coffee]["ingredients"]["coffee"]
+            else:
+                resources["water"] -= MENU[coffee]["ingredients"]["water"]
+                resources["milk"] -= MENU[coffee]["ingredients"]["milk"]
+                resources["coffee"] -= MENU[coffee]["ingredients"]["coffee"]
+
 
 #TODO: Create a function that takes in the money the customer puts in and subtracts it from the cost of the coffee. Check if the customer put in the correct or more than required amount of money
 def check_customer_money(a):
@@ -65,12 +73,64 @@ def check_customer_money(a):
         else:
             print(f"Your change is ${(MENU[coffee_choice]["cost"] - a)*-1:.2}")
             print("Enjoy your coffee")
+        return True
     else:
         print(f"You do not have enough money. Returning ${a:.2}")
+        return False
 
+#TODO: Create a function that checks the resources and makes sure a drink can be ordered. If not, do not accept any money AKA end the program
+def check_resources():
+    if resources["water"] < 250 or resources["milk"] < 150 or resources["coffee"] < 24:
+        print("Sorry, we this machine does not have enough resources to make that coffee. Pick something else")
+        return False
+    else:
+        return True
+def report():
+    for i in resources:
+        if i == "water" or i == "milk":
+            print(f"{i.capitalize()}: {resources[i]}ml")
+        if i == "coffee":
+            print(f"{i.capitalize()}: {resources[i]}g")
+        if i == "money":
+            print(f"{i.capitalize()}: ${resources[i]}")
+def refill_resources():
+    continue_refilling = True
+    while continue_refilling:
+        try:
+            resource = str(input("Which resource would you like to refill?\n"))
+            if resource not in resources:
+                raise ValueError(f"Invalid resource")
+            print(f"You chose to refill {resource}")
+            amount_to_refill = int(input(f"How much {resource} are you putting in?").lower())
+            resources[resource] += amount_to_refill
+        except ValueError as e:
+            print(e)
+        finished_refilling = str(input("Are you finished refilling resources? yes/no "))
+        if finished_refilling == "yes":
+            continue_refilling = False
 
-coffee_choice = input("What would you like? (espresso/latte/cappuccino):").lower()
-print(f"Your {coffee_choice} is ${MENU[coffee_choice]["cost"]:.2f}")
-take_money()
+order_coffee = True
+while order_coffee:
+    coffee_choice = input("What would you like? (espresso/latte/cappuccino) or quit to end: ").lower()
+    if coffee_choice == "off":
+        maintain = True
+        print("Putting the machine in maintenance mode:")
+        while maintain:
+            #TODO: put this in a loop to allow the continuation until done
+            maintenance_mode = str(input(" Choose Option: report | refill | exit "))
+            if maintenance_mode == "report":
+                report()
+            elif maintenance_mode == "refill":
+                refill_resources()
+            else:
+                print("Turning machine on for use")
+                maintain = False
+    elif coffee_choice == "espresso" or coffee_choice == "latte" or coffee_choice == "cappuccino":
+        set_resources(coffee_choice)
+    elif coffee_choice == "quit":
+        order_coffee = False
+    else:
+        print("That is not one of your options. Try again!")
+
 
 
